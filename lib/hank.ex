@@ -1,22 +1,26 @@
 defmodule Hank do
+  alias Hank.Client
   alias Hank.Connection
-  alias Hank.Connection.State
+  alias Hank.Connection.State, as: ConnectionState
+  alias Hank.Client.State, as: ClientState
 
   def start() do
-    state = %State{
-      hostname: "irc.rizon.net",
+    state = %ConnectionState{hostname: "irc.rizon.net"}
+    client     = %ClientState{
       nickname: "MaizeBot",
       realname: "Maize",
-      channels: ["#rainbow.tv"]
+      channels: ["#murdock"],
+      hooks:    [
+        {:handshake,  &Hank.Hook.HandshakeHook.run/2},
+        {:ping,       &Hank.Hook.PingHook.run/2},
+        {:"376",      &Hank.Hook.EndMotdHook.run/2},
+        {:privmsg,    &Hank.Hook.PrivmsgHook.run/2},
+        {:privmsg,    &Hank.Hook.MaizeHook.run/2},
+      ]
     }
 
-    {:ok, event_manager} = GenEvent.start_link()
-
-    GenEvent.add_handler(event_manager, Hank.Event.Init, [])
-    GenEvent.add_handler(event_manager, Hank.Event.Ping, [])
-    GenEvent.add_handler(event_manager, Hank.Event.EndMotd, [])
-    GenEvent.add_handler(event_manager, Hank.Event.Privmsg, [])
-
-    Connection.start_link(%State{state | event_manager: event_manager})
+    {:ok, client}     = Client.start_link(client)
+    {:ok, connection} = Connection.start_link(%ConnectionState{state | client: client})
+    {:ok, client, connection}
   end
 end
