@@ -30,7 +30,7 @@ defmodule Hank.Connection do
     end
   end
 
-  def send_message(%State{socket: socket}, message) do
+  def send_message(message, %State{socket: socket}) do
     IO.puts "Sending #{message}"
     Socket.Stream.send!(socket, "#{message}\r\n")
   end

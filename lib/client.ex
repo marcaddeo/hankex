@@ -42,11 +42,11 @@ defmodule Hank.Client do
   end
 
   defp parse_reply({:privmsg, target, message}, %Client{connection: connection}, _) do
-    Connection.send_message(connection, "PRIVMSG #{target} :#{message}")
+    Connection.send_message("PRIVMSG #{target} :#{message}", connection)
   end
 
   defp parse_reply({:raw, message}, %Client{connection: connection}, _) do
-    Connection.send_message(connection, message)
+    Connection.send_message(message, connection)
   end
 
   defp parse_reply(collection, %Client{} = client, hook) do
