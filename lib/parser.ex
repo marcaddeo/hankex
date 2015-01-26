@@ -40,7 +40,7 @@ defmodule Hank.Parser do
             message = %Message{message | sender: nick, hostmask: hostmask}
           end
 
-          [target | params ] = String.split(head, " :", parts: 2)
+          [target | params] = String.split(head, " :", parts: 2)
 
           params = params
             |> to_string
