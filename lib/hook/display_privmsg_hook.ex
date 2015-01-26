@@ -1,4 +1,4 @@
-defmodule Hank.Hook.PrivmsgHook do
+defmodule Hank.Hook.DisplayPrivmsgHook do
   alias Hank.Message
 
   def run(%Message{command: :privmsg} = message, _) do
@@ -12,8 +12,7 @@ defmodule Hank.Hook.PrivmsgHook do
     :noreply
   end
 
-  defp display_message(_, sender, <<1, message :: binary-size(7), 1>>) do
-    IO.puts("[#{sender}] #{message}")
+  defp display_message(_, _, <<1, _ :: binary-size(7), 1>>) do
     :noreply
   end
 

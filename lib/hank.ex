@@ -14,7 +14,7 @@ defmodule Hank do
         {:handshake,  &Hank.Hook.HandshakeHook.run/2},
         {:ping,       &Hank.Hook.PingHook.run/2},
         {:"376",      &Hank.Hook.EndMotdHook.run/2},
-        {:privmsg,    &Hank.Hook.PrivmsgHook.run/2},
+        {:privmsg,    &Hank.Hook.DisplayPrivmsgHook.run/2},
         {:privmsg,    &Hank.Hook.MaizeHook.run/2},
       ]
     }
