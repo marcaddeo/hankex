@@ -18,6 +18,7 @@ defmodule Hank do
         {:privmsg,    &Hank.Hook.DisplayPrivmsgHook.run/2},
         {:privmsg,    &Hank.Hook.MaizeHook.run/2},
         {:privmsg,    &Hank.Hook.SpoilersHook.run/2},
+        {:privmsg,    &Hank.Hook.HiHook.run/2},
       ]
     }
 
