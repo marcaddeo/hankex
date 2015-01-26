@@ -9,7 +9,7 @@ defmodule Hank do
     client     = %ClientState{
       nickname: "MaizeBot",
       realname: "Maize",
-      channels: ["#murdock"],
+      channels: ["#test"],
       hooks:    [
         {:handshake,  &Hank.Hook.HandshakeHook.run/2},
         {:ping,       &Hank.Hook.PingHook.run/2},
