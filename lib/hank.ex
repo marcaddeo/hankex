@@ -23,4 +23,8 @@ defmodule Hank do
     {:ok, connection} = Connection.start_link(%ConnectionState{state | client: client})
     {:ok, client, connection}
   end
+
+  def load_hook(client, hook, function) do
+    GenServer.cast(client, {:load_hook, hook, function})
+  end
 end

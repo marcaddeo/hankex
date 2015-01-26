@@ -28,6 +28,10 @@ defmodule Hank.Client do
     {:noreply, client}
   end
 
+  def handle_cast({:load_hook, hook, function}, client) do
+    {:noreply, %Client{client | hooks: [{hook, function} | client.hooks]}}
+  end
+
   defp run_hook(hook, message, %Client{} = client) do
     if Keyword.has_key?(client.hooks, hook) do
       for function <- Keyword.get_values(client.hooks, hook) do
