@@ -28,4 +28,12 @@ defmodule Hank do
   def load_hook(client, hook, function) do
     GenServer.cast(client, {:load_hook, hook, function})
   end
+
+  def join(client, channel) do
+   GenServer.cast(client, {:raw, "JOIN #{channel}"})
+  end
+
+  def join(client, channel, key) do
+   GenServer.cast(client, {:raw, "JOIN #{channel} #{key}"})
+  end
 end
