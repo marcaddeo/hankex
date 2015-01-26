@@ -5,11 +5,11 @@ defmodule Hank do
   alias Hank.Client.State, as: ClientState
 
   def start() do
-    state = %ConnectionState{hostname: "irc.rizon.net"}
-    client     = %ClientState{
-      nickname: "MaizeBot",
-      realname: "Maize",
-      channels: ["#test"],
+    state  = %ConnectionState{hostname: "irc.x-zen.cx"}
+    client = %ClientState{
+      nickname: "Hank",
+      realname: "Hank",
+      channels: ["#blah"],
       hooks:    [
         {:handshake,  &Hank.Hook.HandshakeHook.run/2},
         {:ping,       &Hank.Hook.PingHook.run/2},
