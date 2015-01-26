@@ -49,6 +49,10 @@ defmodule Hank.Client do
     Connection.send_message("PRIVMSG #{target} :#{message}", connection)
   end
 
+  defp parse_reply({:notice, target, message}, %Client{connection: connection}, _) do
+    Connection.send_message("NOTICE #{target} :#{message}", connection)
+  end
+
   defp parse_reply({:raw, message}, %Client{connection: connection}, _) do
     Connection.send_message(message, connection)
   end
