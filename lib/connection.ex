@@ -12,7 +12,7 @@ defmodule Hank.Connection do
     {:ok, %State{state | pid: self, socket: socket}, 0}
   end
 
-  def handle_info(:timeout, %State{client: client, pid: pid} = state) do
+  def handle_info(:timeout, %State{client: client} = state) do
     GenServer.cast(client, {:handshake, state})
     listen(state)
     {:noreply, state}
