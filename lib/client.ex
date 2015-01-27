@@ -76,6 +76,8 @@ defmodule Hank.Client do
     {:noreply, client}
   end
 
+  def handle_cast(:noreply, %Client{} = client), do: {:noreply, client}
+
   def handle_cast(collection, %Client{} = client) do
     Enum.map(collection, fn (action) -> GenServer.cast(self, action) end)
     {:noreply, client}
