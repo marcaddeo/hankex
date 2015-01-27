@@ -223,6 +223,14 @@ defmodule Hank.Client do
   end
 
   @doc """
+  Sends a WHOIS request for target
+  """
+  def handle_cast({:whois, target}, %Client{connection: connection} = client) do
+    Connection.send_message("WHOIS #{target}", connection)
+    {:noreply, client}
+  end
+
+  @doc """
   Send a raw message to the server
   """
   def handle_cast({:raw, message}, %Client{connection: connection} = client) do

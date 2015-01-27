@@ -126,6 +126,11 @@ defmodule Hank do
    client
   end
 
+  def whois(client, target) do
+   GenServer.cast(client, {:whois, target})
+   client
+  end
+
   def raw(client, message) do
    GenServer.cast(client, {:raw, message})
    client
