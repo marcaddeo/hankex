@@ -9,7 +9,7 @@ defmodule Hank.Connection do
 
   def init(%State{} = state) do
     {:ok, socket} = Socket.TCP.connect(state.hostname, state.port, packet: :line)
-    {:ok, %State{state | pid: self, socket: socket}, 0}
+    {:ok, %State{socket: socket}, 0}
   end
 
   def handle_info(:timeout, %State{client: client} = state) do

@@ -1,6 +1,5 @@
 defmodule Hank.Connection.State do
   defstruct [
-    pid:       nil,
     socket:    nil,
     client:    nil,
     hostname:  nil,
@@ -10,7 +9,6 @@ end
 
 defmodule Hank.Client.State do
   defstruct [
-    pid:         nil,
     connection:  nil,
     channels:    [],
     nickname:    nil,

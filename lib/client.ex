@@ -9,7 +9,7 @@ defmodule Hank.Client do
   end
 
   def init(%Client{} = client) do
-    {:ok, %Client{client | pid: self}}
+    {:ok, client}
   end
 
   @doc """
