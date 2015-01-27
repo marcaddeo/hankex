@@ -106,6 +106,36 @@ defmodule Hank.Client do
     {:noreply, client}
   end
 
+  def handle_cast({:kick, channel, target}, %Client{connection: connection} = client) do
+    Connection.send_message("KICK #{channel} #{target}", connection)
+    {:noreply, client}
+  end
+
+  def handle_cast({:kick, channel, target, message}, %Client{connection: connection} = client) do
+    Connection.send_message("KICK #{channel} #{target} :#{message}", connection)
+    {:noreply, client}
+  end
+
+  def handle_cast({:mode, target, flags}, %Client{connection: connection} = client) do
+    Connection.send_message("MODE #{target} #{flags}", connection)
+    {:noreply, client}
+  end
+
+  def handle_cast({:mode, target, flags, args}, %Client{connection: connection} = client) do
+    Connection.send_message("MODE #{target} #{flags} #{args}", connection)
+    {:noreply, client}
+  end
+
+  def handle_cast({:invite, target, channel}, %Client{connection: connection} = client) do
+    Connection.send_message("INVITE #{target} #{channel}", connection)
+    {:noreply, client}
+  end
+
+  def handle_cast({:pong, args}, %Client{connection: connection} = client) do
+    Connection.send_message("PONG #{args}", connection)
+    {:noreply, client}
+  end
+
   def handle_cast({:raw, message}, %Client{connection: connection} = client) do
     Connection.send_message(message, connection)
     {:noreply, client}
