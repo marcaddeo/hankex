@@ -51,6 +51,31 @@ defmodule Hank.Client do
     {:noreply, client}
   end
 
+  def handle_cast({:join, channel}, %Client{connection: connection, channels: channels} = client) do
+    Connection.send_message("JOIN #{channel}", connection)
+    {:noreply, %Client{client | channels: [channel | channels]}}
+  end
+
+  def handle_cast({:join, channel, key}, %Client{connection: connection, channels: channels} = client) do
+    Connection.send_message("JOIN #{channel} #{key}", connection)
+    {:noreply, %Client{client | channels: [channel | channels]}}
+  end
+
+  def handle_cast({:part, channel}, %Client{connection: connection, channels: channels} = client) do
+    Connection.send_message("PART #{channel}", connection)
+    {:noreply, %Client{client | channels: channels -- channel}}
+  end
+
+  def handle_cast({:part, channel, message}, %Client{connection: connection, channels: channels} = client) do
+    Connection.send_message("PART #{channel} :#{message}", connection)
+    {:noreply, %Client{client | channels: channels -- channel}}
+  end
+
+  def handle_cast({:nick, nickname}, %Client{connection: connection} = client) do
+    Connection.send_message("NICK #{nickname}", connection)
+    {:noreply, %Client{client | nickname: nickname}}
+  end
+
   def handle_cast({:privmsg, target, message}, %Client{connection: connection} = client) do
     Connection.send_message("PRIVMSG #{target} :#{message}", connection)
     {:noreply, client}
@@ -68,6 +93,16 @@ defmodule Hank.Client do
 
   def handle_cast({:notice, target, message}, %Client{connection: connection} = client) do
     Connection.send_message("NOTICE #{target} :#{message}", connection)
+    {:noreply, client}
+  end
+
+  def handle_cast(:quit, %Client{connection: connection} = client) do
+    Connection.send_message("QUIT :Leaving", connection)
+    {:noreply, client}
+  end
+
+  def handle_cast({:quit, message}, %Client{connection: connection} = client) do
+    Connection.send_message("QUIT :#{message}", connection)
     {:noreply, client}
   end
 
