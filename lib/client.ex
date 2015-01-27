@@ -45,6 +45,16 @@ defmodule Hank.Client do
     {:noreply, client}
   end
 
+  def handle_cast({:ctcp, target, message}, %Client{connection: connection} = client) do
+    Connection.send_message("PRIVMSG #{target} :#{<<1, message, 1>>}", connection)
+    {:noreply, client}
+  end
+
+  def handle_cast({:action, target, message}, %Client{connection: connection} = client) do
+    Connection.send_message("PRIVMSG #{target} :#{<<1, "ACTION ", message, 1>>}", connection)
+    {:noreply, client}
+  end
+
   def handle_cast({:notice, target, message}, %Client{connection: connection} = client) do
     Connection.send_message("NOTICE #{target} :#{message}", connection)
     {:noreply, client}
