@@ -9,6 +9,7 @@ Todo
 ====
 - [ ] List stuff
 - [ ] Write tests
+- [ ] Add comments
 - [ ] Implement standard irc messages for hook responses
 - [ ] Add alternate nick hook
 - [ ] Implement Command system
