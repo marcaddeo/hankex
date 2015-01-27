@@ -14,5 +14,6 @@ defmodule Hank.Client.State do
     nickname:    nil,
     realname:    nil,
     hooks:       [],
+    extra:       [],
   ]
 end
