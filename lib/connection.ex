@@ -3,6 +3,15 @@ defmodule Hank.Connection do
   alias Hank.Connection.State
   alias Hank.Parser
 
+  defmodule State do
+    defstruct [
+      socket:    nil,
+      client:    nil,
+      hostname:  nil,
+      port:      6667,
+    ]
+  end
+
   def start_link(%State{} = state) do
     GenServer.start_link(__MODULE__, state)
   end

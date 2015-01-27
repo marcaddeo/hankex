@@ -4,6 +4,17 @@ defmodule Hank.Client do
   alias Hank.Connection
   alias Hank.Client.State, as: Client
 
+  defmodule State do
+    defstruct [
+      connection:  nil,
+      channels:    [],
+      nickname:    nil,
+      realname:    nil,
+      hooks:       [],
+      extra:       [],
+    ]
+  end
+
   def start_link(%Client{} = client) do
     GenServer.start_link(__MODULE__, client)
   end
