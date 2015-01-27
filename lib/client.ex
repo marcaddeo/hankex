@@ -45,7 +45,7 @@ defmodule Hank.Client do
   def handle_cast(%Message{command: hook} = message, %Client{} = client) do
     if Keyword.has_key?(client.hooks, hook) do
       for function <- Keyword.get_values(client.hooks, hook) do
-        GenServer.cast(client, function.(message, client))
+        GenServer.cast(self, function.(message, client))
       end
     end
     {:noreply, client}
@@ -77,7 +77,7 @@ defmodule Hank.Client do
   end
 
   def handle_cast(collection, %Client{} = client) do
-    Enum.map(collection, fn (action) -> GenServer.cast(client, action) end)
+    Enum.map(collection, fn (action) -> GenServer.cast(self, action) end)
     {:noreply, client}
   end
 end
