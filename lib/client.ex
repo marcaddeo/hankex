@@ -19,10 +19,6 @@ defmodule Hank.Client do
     GenServer.start_link(__MODULE__, client)
   end
 
-  def init(%Client{} = client) do
-    {:ok, client}
-  end
-
   @doc """
   Register the client with the irc server and add the connections PID to the
   client state
