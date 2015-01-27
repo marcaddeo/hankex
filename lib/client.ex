@@ -58,10 +58,17 @@ defmodule Hank.Client do
   end
 
   @doc """
-  Removes a hook from the client while running
+  Removes any hooks that match `hook`
   """
   def handle_cast({:remove_hook, hook}, %Client{hooks: hooks} = client) do
-    {:noreply, %Client{client | hooks: hooks -- hook}}
+    {:noreply, %Client{client | hooks: Keyword.delete(hooks, hook)}}
+  end
+
+  @doc """
+  Removes a hook that matching by `hook` name and `function`
+  """
+  def handle_cast({:remove_hook, hook, function}, %Client{hooks: hooks} = client) do
+    {:noreply, %Client{client | hooks: Keyword.delete(hooks, hook, function)}}
   end
 
   @doc """

@@ -36,6 +36,11 @@ defmodule Hank do
     client
   end
 
+  def remove_hook(client, hook, function) do
+    GenServer.cast(client, {:remove_hook, hook, function})
+    client
+  end
+
   def join(client, channel) do
    GenServer.cast(client, {:join, channel})
    client
