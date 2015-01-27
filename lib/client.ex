@@ -42,9 +42,9 @@ defmodule Hank.Client do
     {:noreply, %Client{client | hooks: client.hooks -- hook}}
   end
 
-  def handle_cast(%Message{command: hook} = message, %Client{} = client) do
-    if Keyword.has_key?(client.hooks, hook) do
-      for function <- Keyword.get_values(client.hooks, hook) do
+  def handle_cast(%Message{command: hook} = message, %Client{hooks: hooks} = client) do
+    if Keyword.has_key?(hooks, hook) do
+      for function <- Keyword.get_values(hooks, hook) do
         GenServer.cast(self, function.(message, client))
       end
     end
