@@ -44,6 +44,13 @@ defmodule Hank.Client do
   end
 
   @doc """
+  Update the extra configuration section of the client state
+  """
+  def handle_cast({:update_extra, extra}, %Client{} = client) do
+    {:noreply, %Client{client | extra: extra}}
+  end
+
+  @doc """
   Loads a hook into the client while running
   """
   def handle_cast({:load_hook, hook, function}, %Client{hooks: hooks} = client) do
