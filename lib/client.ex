@@ -1,17 +1,17 @@
 defmodule Hank.Client do
-  use GenServer
-  alias Hank.Message
-  alias Hank.Connection
-  alias Hank.Client.State, as: Client
-
-  @defmodule """
+  @moduledoc """
   `Hank.Client` is the brains of the operation. It processes messages from the
   IRC server and calls hooks if they match the command issued by the IRC server
   and sends commands to the server depending on the response from the hook.
   """
 
+  use GenServer
+  alias Hank.Message
+  alias Hank.Connection
+  alias Hank.Client.State, as: Client
+
   defmodule State do
-    @defmodule """
+    @moduledoc """
     The state of the client
     """
 
