@@ -12,19 +12,14 @@ defmodule Hank.Client do
     {:ok, %Client{client | pid: self}}
   end
 
-  def handle_cast({:handshake, connection}, %Client{} = client) do
+  @doc """
+  Register the client with the irc server and add the connections PID to the
+  client state
+  """
+  def handle_cast({:handshake, connection}, %Client{nickname: nick, realname: name} = client) do
     client = %Client{client | connection: connection}
-    run_hook(:handshake, nil, client)
-    {:noreply, client}
-  end
-
-  def handle_cast({:raw, message}, %Client{} = client) do
-    parse_reply({:raw, message}, client, nil)
-    {:noreply, client}
-  end
-
-  def handle_cast(%Message{} = message, %Client{} = client) do
-    run_hook(message.command, message, client)
+    Connection.send_message("NICK #{nick}", connection)
+    Connection.send_message("USER #{nick} 0 * :#{name}", connection)
     {:noreply, client}
   end
 
@@ -32,32 +27,36 @@ defmodule Hank.Client do
     {:noreply, %Client{client | hooks: [{hook, function} | client.hooks]}}
   end
 
-  defp run_hook(hook, message, %Client{} = client) do
+  def handle_cast({:remove_hook, hook}, %Client{} = client) do
+    {:noreply, %Client{client | hooks: client.hooks -- hook}}
+  end
+
+  def handle_cast(%Message{command: hook} = message, %Client{} = client) do
     if Keyword.has_key?(client.hooks, hook) do
       for function <- Keyword.get_values(client.hooks, hook) do
-        function.(message, client) |> parse_reply(client, hook)
+        GenServer.cast(client, function.(message, client))
       end
     end
+    {:noreply, client}
   end
 
-  defp parse_reply(:noreply, _, _), do: :noreply
-  defp parse_reply(:remove_hook, _, _) do
-    IO.puts("Not implemented")
-  end
-
-  defp parse_reply({:privmsg, target, message}, %Client{connection: connection}, _) do
+  def handle_cast({:privmsg, target, message}, %Client{connection: connection} = client) do
     Connection.send_message("PRIVMSG #{target} :#{message}", connection)
+    {:noreply, client}
   end
 
-  defp parse_reply({:notice, target, message}, %Client{connection: connection}, _) do
+  def handle_cast({:notice, target, message}, %Client{connection: connection} = client) do
     Connection.send_message("NOTICE #{target} :#{message}", connection)
+    {:noreply, client}
   end
 
-  defp parse_reply({:raw, message}, %Client{connection: connection}, _) do
+  def handle_cast({:raw, message}, %Client{connection: connection} = client) do
     Connection.send_message(message, connection)
+    {:noreply, client}
   end
 
-  defp parse_reply(collection, %Client{} = client, hook) do
-    Enum.map(collection, fn (action) -> parse_reply(action, client, hook) end)
+  def handle_cast(collection, %Client{} = client) do
+    Enum.map(collection, fn (action) -> GenServer.cast(client, action) end)
+    {:noreply, client}
   end
 end
