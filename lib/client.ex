@@ -34,12 +34,12 @@ defmodule Hank.Client do
     {:noreply, client}
   end
 
-  def handle_cast({:load_hook, hook, function}, client) do
-    {:noreply, %Client{client | hooks: [{hook, function} | client.hooks]}}
+  def handle_cast({:load_hook, hook, function}, %Client{hooks: hooks} = client) do
+    {:noreply, %Client{client | hooks: [{hook, function} | hooks]}}
   end
 
-  def handle_cast({:remove_hook, hook}, %Client{} = client) do
-    {:noreply, %Client{client | hooks: client.hooks -- hook}}
+  def handle_cast({:remove_hook, hook}, %Client{hooks: hooks} = client) do
+    {:noreply, %Client{client | hooks: hooks -- hook}}
   end
 
   def handle_cast(%Message{command: hook} = message, %Client{hooks: hooks} = client) do
