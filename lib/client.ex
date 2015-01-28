@@ -32,6 +32,10 @@ defmodule Hank.Client do
     GenServer.start_link(__MODULE__, client)
   end
 
+  def handle_call(:get_state, _, %Client{} = client) do
+    {:reply, client, client}
+  end
+
   @doc """
   Register the client with the irc server and add the connections PID to the
   client state
