@@ -68,11 +68,13 @@ defmodule Hank.Client do
   Loads a hook into the client while running
   """
   def handle_cast({:load_hook, hook, function}, %Client{hooks: hooks} = client) do
-    {:noreply, %Client{client | hooks: [{hook, function} | hooks]}}
+    {:ok, tag, pid} = function.(self)
+    {:noreply, %Client{client | hooks: [{hook, {pid, function, tag}} | hooks]}}
   end
 
   @doc """
   Removes any hooks that match `hook`
+  TODO: Garbage collection!
   """
   def handle_cast({:remove_hook, hook}, %Client{hooks: hooks} = client) do
     {:noreply, %Client{client | hooks: Keyword.delete(hooks, hook)}}
