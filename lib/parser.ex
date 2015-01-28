@@ -33,16 +33,20 @@ defmodule Hank.Parser do
 
         parse_data(tail, %Message{message | command: command})
       true ->
-        if String.contains?(head, " :") do
+        if String.contains?(head, ":") do
           if String.contains?(message.prefix, "!") do
             [nick | hostmask] = String.split(message.prefix, "!", parts: 2)
 
             message = %Message{message | sender: nick, hostmask: hostmask}
           end
 
-          [target | params] = String.split(head, " :", parts: 2)
+          [target | params] = String.split(head, ":", parts: 2)
 
           params = params
+            |> to_string
+            |> String.strip
+
+          target = target
             |> to_string
             |> String.strip
 
