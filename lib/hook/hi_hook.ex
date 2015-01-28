@@ -13,7 +13,7 @@ defmodule Hank.Hook.HiHook do
 
     if message =~ ~r/hi #{nickname}/i do
       greeting = Enum.at(@greetings, :random.uniform(@count) - 1)
-      Hank.privmsg(client, "#{greeting} #{sender}")
+      Hank.privmsg(client, target, "#{greeting} #{sender}")
     end
 
     {:noreply, client}
