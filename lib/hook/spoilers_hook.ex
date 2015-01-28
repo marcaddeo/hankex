@@ -1,11 +1,12 @@
 defmodule Hank.Hook.SpoilersHook do
-  alias Hank.Message
+  use Hank.Hook
 
-  def run(%Message{command: :privmsg, target: target, sender: sender, params: message}, _) do
+  def handle_cast(%Message{command: :privmsg, target: target, sender: sender, params: message}, client) do
     if message =~ ~r/spoiler(?s)/ do
-      {:privmsg, target, "#{sender}: pls no spoilers"}
-    else
-      :noreply
+      Hank.privmsg(client, "#{sender}: pls no spoilers")
     end
+
+    {:noreply, client}
   end
+  def handle_cast(_, client), do: {:noreply, client}
 end

@@ -1,8 +1,14 @@
 defmodule Hank.Hook.EndMotdHook do
-  alias Hank.Message
+  use Hank.Hook
   alias Hank.Client.State, as: Client
 
-  def run(%Message{command: :"376"}, %Client{channels: channels}) do
-    Enum.map(channels, fn (channel) -> {:raw, "JOIN #{channel}"} end)
+  @tag :end_motd_hook
+  @version "0.0.1"
+
+  def handle_cast(%Message{params: params}, client) do
+    %Client{channels: channels} = GenServer.call(client, :get_state)
+    Enum.map(channels, fn (channel) -> Hank.join(client, channel) end)
+    {:noreply, client}
   end
+  def handle_cast(_, client), do: {:noreply, client}
 end

@@ -1,23 +1,26 @@
 defmodule Hank.Hook.DisplayPrivmsgHook do
-  alias Hank.Message
+  use Hank.Hook
 
-  def run(%Message{command: :privmsg} = message, _) do
+  @tag :display_privmsg_hook
+  @version "0.0.1"
+
+  def handle_cast(%Message{command: :privmsg} = message, client) do
     %Message{target: target, sender: sender, params: message} = message
 
     display_message(target, sender, message)
+    {:noreply, client}
   end
+  def handle_cast(_, client), do: {:noreply, client}
 
   defp display_message("#" <> target, sender, message) do
     IO.puts("[##{target}] #{sender}: #{message}")
-    :noreply
   end
 
   defp display_message(_, _, <<1, _ :: binary-size(7), 1>>) do
-    :noreply
+    :ok
   end
 
   defp display_message(_, sender, message) do
     IO.puts("[#{sender}] #{message}")
-    :noreply
   end
 end

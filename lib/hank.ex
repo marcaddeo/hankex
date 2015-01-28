@@ -11,13 +11,13 @@ defmodule Hank do
       realname: "Hank",
       channels: ["#blah"],
       hooks:    [
-        {:ping,     &Hank.Hook.PingHook.run/2},
-        {:"376",    &Hank.Hook.EndMotdHook.run/2},
-        {:privmsg,  &Hank.Hook.VersionHook.run/2},
-        {:privmsg,  &Hank.Hook.DisplayPrivmsgHook.run/2},
-        {:privmsg,  &Hank.Hook.MaizeHook.run/2},
-        {:privmsg,  &Hank.Hook.SpoilersHook.run/2},
-        {:privmsg,  &Hank.Hook.HiHook.run/2},
+        {:ping,     &Hank.Hook.PingHook.register/1},
+        {:"376",    &Hank.Hook.EndMotdHook.register/1},
+        {:privmsg,  &Hank.Hook.VersionHook.register/1},
+        {:privmsg,  &Hank.Hook.DisplayPrivmsgHook.register/1},
+        {:privmsg,  &Hank.Hook.MaizeHook.register/1},
+        {:privmsg,  &Hank.Hook.SpoilersHook.register/1},
+        {:privmsg,  &Hank.Hook.HiHook.register/1},
       ]
     }
 

@@ -32,6 +32,16 @@ defmodule Hank.Client do
     GenServer.start_link(__MODULE__, client)
   end
 
+  def init(%Client{hooks: hooks} = client) do
+    hooks = hooks
+      |> Enum.map(fn ({hook, function}) ->
+        {:ok, tag, pid} = function.(self)
+        {hook, {pid, function, tag}}
+      end)
+
+    {:ok, %Client{client | hooks: hooks}}
+  end
+
   def handle_call(:get_state, _, %Client{} = client) do
     {:reply, client, client}
   end
@@ -81,8 +91,8 @@ defmodule Hank.Client do
   """
   def handle_cast(%Message{command: hook} = message, %Client{hooks: hooks} = client) do
     if Keyword.has_key?(hooks, hook) do
-      for function <- Keyword.get_values(hooks, hook) do
-        GenServer.cast(self, function.(message, client))
+      for {pid, _, _} <- Keyword.get_values(hooks, hook) do
+        GenServer.cast(pid, message)
       end
     end
     {:noreply, client}

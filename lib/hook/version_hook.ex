@@ -1,14 +1,15 @@
 defmodule Hank.Hook.VersionHook do
-  alias Hank.Message
+  use Hank.Hook
 
-  def run(%Message{command: :privmsg} = message, _) do
-    %Message{sender: sender, params: message} = message
-
+  def handle_cast(%Message{command: :privmsg, sender: sender, params: message}, client) do
     case message do
       <<1, "VERSION", 1>> ->
         version = <<1, "VERSION Elixir " <> System.version(), 1>>
-        {:notice, sender, version}
-      _ -> :noreply
+        Hank.notice(client, sender, version)
+      _ -> :ok
     end
+
+    {:noreply, client}
   end
+  def handle_cast(_, client), do: {:noreply, client}
 end
