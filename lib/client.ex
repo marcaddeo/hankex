@@ -10,6 +10,8 @@ defmodule Hank.Client do
   alias Hank.Connection
   alias Hank.Client.State, as: Client
 
+  @connection Hank.Connection.ConnectionSupervisor
+
   defmodule State do
     @moduledoc """
     The state of the client
@@ -46,14 +48,11 @@ defmodule Hank.Client do
     {:reply, client, client}
   end
 
-  @doc """
-  Register the client with the irc server and add the connections PID to the
-  client state
-  """
-  def handle_cast({:handshake, connection}, %Client{nickname: nick, realname: name} = client) do
-    client = %Client{client | connection: connection}
-    Connection.send_message("NICK #{nick}", connection)
-    Connection.send_message("USER #{nick} 0 * :#{name}", connection)
+  def handle_cast(:connected, %Client{nickname: nick, realname: name} = client) do
+    self
+      |> Hank.nick(nick)
+      |> Hank.user(nick, name)
+
     {:noreply, client}
   end
 
@@ -101,10 +100,18 @@ defmodule Hank.Client do
   end
 
   @doc """
+  Send a USER command to the server with nickname and realname
+  """
+  def handle_cast({:user, nickname, realname}, %Client{} = client) do
+    @connection.send_message("USER #{nickname} 0 * :#{realname}")
+    {:noreply, client}
+  end
+
+  @doc """
   Joins a channel and updates the channel list in the client state
   """
-  def handle_cast({:join, channel}, %Client{connection: connection, channels: channels} = client) do
-    Connection.send_message("JOIN #{channel}", connection)
+  def handle_cast({:join, channel}, %Client{channels: channels} = client) do
+    @connection.send_message("JOIN #{channel}")
     {:noreply, %Client{client | channels: [channel | channels]}}
   end
 
@@ -112,16 +119,16 @@ defmodule Hank.Client do
   Joins a password protected channel and updates the channel list in the client
   state
   """
-  def handle_cast({:join, channel, key}, %Client{connection: connection, channels: channels} = client) do
-    Connection.send_message("JOIN #{channel} #{key}", connection)
+  def handle_cast({:join, channel, key}, %Client{channels: channels} = client) do
+    @connection.send_message("JOIN #{channel} #{key}")
     {:noreply, %Client{client | channels: [channel | channels]}}
   end
 
   @doc """
   Parts a channel and updates the channel list in the client state
   """
-  def handle_cast({:part, channel}, %Client{connection: connection, channels: channels} = client) do
-    Connection.send_message("PART #{channel}", connection)
+  def handle_cast({:part, channel}, %Client{channels: channels} = client) do
+    @connection.send_message("PART #{channel}")
     {:noreply, %Client{client | channels: channels -- channel}}
   end
 
@@ -129,128 +136,127 @@ defmodule Hank.Client do
   Parts a channel with a part message and updates the channel list in the client
   state
   """
-  def handle_cast({:part, channel, message}, %Client{connection: connection, channels: channels} = client) do
-    Connection.send_message("PART #{channel} :#{message}", connection)
+  def handle_cast({:part, channel, message}, %Client{channels: channels} = client) do
+    @connection.send_message("PART #{channel} :#{message}")
     {:noreply, %Client{client | channels: channels -- channel}}
   end
 
   @doc """
   Changes the bots nickname, and updates the nickname in the client state
   """
-  def handle_cast({:nick, nickname}, %Client{connection: connection} = client) do
-    Connection.send_message("NICK #{nickname}", connection)
+  def handle_cast({:nick, nickname}, %Client{} = client) do
+    @connection.send_message("NICK #{nickname}")
     {:noreply, %Client{client | nickname: nickname}}
   end
 
   @doc """
   Sends a PRIVMSG message to target
   """
-  def handle_cast({:privmsg, target, message}, %Client{connection: connection} = client) do
-    Connection.send_message("PRIVMSG #{target} :#{message}", connection)
-    {:noreply, client}
+  def handle_cast({:privmsg, target, message}, %Client{} = client) do
+    @connection.send_message("PRIVMSG #{target} :#{message}")
   end
 
   @doc """
   Sends a CTCP message to target
   """
-  def handle_cast({:ctcp, target, message}, %Client{connection: connection} = client) do
-    Connection.send_message("PRIVMSG #{target} :#{<<1, message, 1>>}", connection)
+  def handle_cast({:ctcp, target, message}, %Client{} = client) do
+    @connection.send_message("PRIVMSG #{target} :#{<<1, message, 1>>}")
     {:noreply, client}
   end
 
   @doc """
   Sends an ACTION ctcp message to target
   """
-  def handle_cast({:action, target, message}, %Client{connection: connection} = client) do
-    Connection.send_message("PRIVMSG #{target} :#{<<1, "ACTION ", message, 1>>}", connection)
+  def handle_cast({:action, target, message}, %Client{} = client) do
+    @connection.send_message("PRIVMSG #{target} :#{<<1, "ACTION ", message, 1>>}")
     {:noreply, client}
   end
 
   @doc """
   Sends a NOTICE message to target
   """
-  def handle_cast({:notice, target, message}, %Client{connection: connection} = client) do
-    Connection.send_message("NOTICE #{target} :#{message}", connection)
+  def handle_cast({:notice, target, message}, %Client{} = client) do
+    @connection.send_message("NOTICE #{target} :#{message}")
     {:noreply, client}
   end
 
   @doc """
   Sends the QUIT command to the server
   """
-  def handle_cast(:quit, %Client{connection: connection} = client) do
-    Connection.send_message("QUIT :Leaving", connection)
+  def handle_cast(:quit, %Client{} = client) do
+    @connection.send_message("QUIT :Leaving")
     {:noreply, client}
   end
 
   @doc """
   Sends a QUIT command to the server with a quit message
   """
-  def handle_cast({:quit, message}, %Client{connection: connection} = client) do
-    Connection.send_message("QUIT :#{message}", connection)
+  def handle_cast({:quit, message}, %Client{} = client) do
+    @connection.send_message("QUIT :#{message}")
     {:noreply, client}
   end
 
   @doc """
   Kicks the target from the channel
   """
-  def handle_cast({:kick, channel, target}, %Client{connection: connection} = client) do
-    Connection.send_message("KICK #{channel} #{target}", connection)
+  def handle_cast({:kick, channel, target}, %Client{} = client) do
+    @connection.send_message("KICK #{channel} #{target}")
     {:noreply, client}
   end
 
   @doc """
   Kicks the target from the channel with a kick message
   """
-  def handle_cast({:kick, channel, target, message}, %Client{connection: connection} = client) do
-    Connection.send_message("KICK #{channel} #{target} :#{message}", connection)
+  def handle_cast({:kick, channel, target, message}, %Client{} = client) do
+    @connection.send_message("KICK #{channel} #{target} :#{message}")
     {:noreply, client}
   end
 
   @doc """
   Set the MODE of target to flags
   """
-  def handle_cast({:mode, target, flags}, %Client{connection: connection} = client) do
-    Connection.send_message("MODE #{target} #{flags}", connection)
+  def handle_cast({:mode, target, flags}, %Client{} = client) do
+    @connection.send_message("MODE #{target} #{flags}")
     {:noreply, client}
   end
 
   @doc """
   Set the MODE of target to flags with args
   """
-  def handle_cast({:mode, target, flags, args}, %Client{connection: connection} = client) do
-    Connection.send_message("MODE #{target} #{flags} #{args}", connection)
+  def handle_cast({:mode, target, flags, args}, %Client{} = client) do
+    @connection.send_message("MODE #{target} #{flags} #{args}")
     {:noreply, client}
   end
 
   @doc """
   Invite target to channel
   """
-  def handle_cast({:invite, target, channel}, %Client{connection: connection} = client) do
-    Connection.send_message("INVITE #{target} #{channel}", connection)
+  def handle_cast({:invite, target, channel}, %Client{} = client) do
+    @connection.send_message("INVITE #{target} #{channel}")
     {:noreply, client}
   end
 
   @doc """
   Sends a PONG to the server with args
   """
-  def handle_cast({:pong, args}, %Client{connection: connection} = client) do
-    Connection.send_message("PONG #{args}", connection)
+  def handle_cast({:pong, args}, %Client{} = client) do
+    @connection.send_message("PONG #{args}")
     {:noreply, client}
   end
 
   @doc """
   Sends a WHOIS request for target
   """
-  def handle_cast({:whois, target}, %Client{connection: connection} = client) do
-    Connection.send_message("WHOIS #{target}", connection)
+  def handle_cast({:whois, target}, %Client{} = client) do
+    @connection.send_message("WHOIS #{target}")
     {:noreply, client}
   end
 
   @doc """
   Send a raw message to the server
   """
-  def handle_cast({:raw, message}, %Client{connection: connection} = client) do
-    Connection.send_message(message, connection)
+  def handle_cast({:raw, message}, %Client{} = client) do
+    @connection.send_message(message)
     {:noreply, client}
   end
 
