@@ -7,11 +7,12 @@ defmodule Hank do
   alias Hank.Client.State, as: ClientState
 
   def start() do
-    connection = %ConnectionState{hostname: "irc.x-zen.cx"}
+    config     = Mix.Config.read("config/config.exs")
+    connection = %ConnectionState{hostname: config[:connection][:hostname]}
     client     = %ClientState{
-      nickname: "Hank",
-      realname: "Hank",
-      channels: ["#blah"],
+      nickname: config[:client][:nickname],
+      realname: config[:client][:realname],
+      channels: config[:client][:channels],
       hooks:    [
         {:ping,     &Hank.Hook.PingHook.register/1},
         {:"376",    &Hank.Hook.EndMotdHook.register/1},
