@@ -157,6 +157,14 @@ defmodule Hank.Client do
   end
 
   @doc """
+  Identifies to NickServ
+  """
+  def handle_cast({:identify, password}, %Client{} = client) do
+    @connection.send_message("PRIVMSG NickServ :IDENTIFY #{password}")
+    {:noreply, client}
+  end
+
+  @doc """
   Sends a CTCP message to target
   """
   def handle_cast({:ctcp, target, message}, %Client{} = client) do

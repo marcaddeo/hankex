@@ -16,6 +16,11 @@ defmodule Hank.Commands do
         client
       end
 
+      def identify(client, password) do
+       GenServer.cast(client, {:identify, password})
+       client
+      end
+
       def user(client, nickname, realname) do
        GenServer.cast(client, {:user, nickname, realname})
        client
