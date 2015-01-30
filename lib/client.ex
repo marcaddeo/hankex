@@ -157,6 +157,7 @@ defmodule Hank.Client do
   """
   def handle_cast({:privmsg, target, message}, %Client{} = client) do
     @connection.send_message("PRIVMSG #{target} :#{message}")
+    {:noreply, client}
   end
 
   @doc """
