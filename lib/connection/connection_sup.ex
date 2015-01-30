@@ -4,7 +4,7 @@ defmodule Hank.Connection.ConnectionSupervisor do
   alias Hank.Connection.ConnectionServer
   alias Hank.Connection.ConnectionListener
 
-  @supervisor Hank
+  @supervisor Hank.Supervisor
 
   def start_link(%State{} = state) do
     IO.puts "Starting Connection Supervisor"
