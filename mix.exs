@@ -12,7 +12,10 @@ defmodule Hank.Mixfile do
   #
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:logger]]
+    [
+      mod: {Hank, []},
+      applications: [:logger, :stdlib, :kernel, :elixir, :mix, :socket]
+    ]
   end
 
   # Dependencies can be Hex packages:
@@ -27,6 +30,7 @@ defmodule Hank.Mixfile do
   defp deps do
     [
       {:socket, "~> 0.2.8"},
+      {:exrm, "~> 0.14.17"},
     ]
   end
 end
