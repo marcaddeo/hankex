@@ -15,11 +15,11 @@ defmodule Hank do
       hooks:    [
         {:ping,     &Hank.Hook.PingHook.register/1},
         {:"376",    &Hank.Hook.EndMotdHook.register/1},
-        #{:privmsg,  &Hank.Hook.VersionHook.register/1},
+        {:privmsg,  &Hank.Hook.VersionHook.register/1},
         {:privmsg,  &Hank.Hook.DisplayPrivmsgHook.register/1},
-        #{:privmsg,  &Hank.Hook.MaizeHook.register/1},
-        #{:privmsg,  &Hank.Hook.SpoilersHook.register/1},
-        #{:privmsg,  &Hank.Hook.HiHook.register/1},
+        {:privmsg,  &Hank.Hook.MaizeHook.register/1},
+        {:privmsg,  &Hank.Hook.SpoilersHook.register/1},
+        {:privmsg,  &Hank.Hook.HiHook.register/1},
       ]
     }
 
