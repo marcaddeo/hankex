@@ -21,6 +21,7 @@ defmodule Hank.Client do
       connection:  nil,
       channels:    [],
       nickname:    nil,
+      password:    nil,
       realname:    nil,
       hooks:       [],
       extra:       [],
@@ -48,9 +49,7 @@ defmodule Hank.Client do
     {:reply, client, client}
   end
 
-  def handle_cast(:connected, %Client{nickname: nick, realname: name} = client) do
-    password = Mix.Config.read!("config/config.exs")[:nickserv][:password]
-
+  def handle_cast(:connected, %Client{nickname: nick, realname: name, password: password} = client) do
     self
       |> Hank.nick(nick)
       |> Hank.user(nick, name)
