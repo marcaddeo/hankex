@@ -11,7 +11,7 @@ defmodule Hank.Core.Connection.Listener do
     {:ok, state, 0}
   end
 
-  def handle_info(:timeout, {server, socket} = state) do
+  def handle_info(:timeout, state) do
     listen(state)
     {:noreply, state}
   end

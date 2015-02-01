@@ -12,7 +12,7 @@ defmodule Hank.Core.Connection.Supervisor do
     return
   end
 
-  def init(state) do
+  def init(_) do
     supervise([], strategy: :one_for_one)
   end
 

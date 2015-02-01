@@ -9,7 +9,6 @@ defmodule Hank.Core.Client.State do
     nickname:    nil,
     password:    nil,
     realname:    nil,
-    hooks:       [],
-    extra:       [],
+    plugins:     [],
   ]
 end
