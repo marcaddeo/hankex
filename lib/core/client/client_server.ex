@@ -8,8 +8,8 @@ defmodule Hank.Core.Client.Server do
   end
 
   def handle_cast({:connected, conn}, state) do
-    Connection.send(conn, "USER Hank_ 0 * :Hank_\r\n")
-    Connection.send(conn, "NICK Hank_\r\n")
+    Connection.send(conn, "USER Hank 0 * :Hank")
+    Connection.send(conn, "NICK Hank")
     Connection.send(conn, "PRIVMSG NickServ :IDENTIFY password")
     {:noreply, %State{state | connection: conn}}
   end
