@@ -20,6 +20,7 @@ defmodule Hank do
         %Plugin{name: :end_motd_plugin, module: Hank.Plugin.EndMotdPlugin, hooks: [:"376"]},
         %Plugin{name: :version_plugin, module: Hank.Plugin.VersionPlugin, hooks: [:privmsg]},
         %Plugin{name: :hi_plugin, module: Hank.Plugin.HiPlugin, hooks: [:privmsg]},
+        %Plugin{name: :maize_plugin, module: Hank.Plugin.MaizePlugin, hooks: [:privmsg]},
       ]
     }
 
