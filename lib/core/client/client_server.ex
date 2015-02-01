@@ -1,5 +1,6 @@
 defmodule Hank.Core.Client.Server do
   use GenServer
+  alias Hank.Core.Message
   alias Hank.Core.Client.State
   alias Hank.Core.Connection.Server, as: Connection
 
@@ -12,5 +13,9 @@ defmodule Hank.Core.Client.Server do
     Connection.send(conn, "NICK Hank")
     Connection.send(conn, "PRIVMSG NickServ :IDENTIFY password")
     {:noreply, %State{state | connection: conn}}
+  end
+
+  def handle_cast({:message, %Message{} = message}, %State{connection: conn} = state) do
+    {:noreply, state}
   end
 end
