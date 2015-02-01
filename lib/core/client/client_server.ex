@@ -5,7 +5,6 @@ defmodule Hank.Core.Client.Server do
   alias Hank.Core.Plugin.Supervisor, as: PluginSupervisor
   alias Hank.Core.Connection.Server, as: Connection
 
-  @supervisor Hank.Core.Client.Supervisor
   ############
   # Public API
   ############
@@ -173,7 +172,8 @@ defmodule Hank.Core.Client.Server do
     nick(nick)
 
     # Start the Plugin Supervisor
-    Supervisor.start_child(@supervisor, supervisor(PluginSupervisor, [plugins]))
+    child = supervisor(PluginSupervisor, [plugins])
+    Supervisor.start_child(Hank.Core.Client.Supervisor, child)
 
     {:noreply, %State{state | connection: conn}}
   end
