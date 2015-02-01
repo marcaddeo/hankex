@@ -5,12 +5,12 @@ defmodule Hank.Core.Plugin.Supervisor do
   alias Hank.Core.Plugin.State, as: Plugin
   alias Hank.Core.Client.State, as: Client
 
-  def start_link(%Client{} = client) do
+  def start_link(plugins) do
     Logger.info("Starting Plugin Supervisor")
-    Supervisor.start_link(__MODULE__, client, name: __MODULE__)
+    Supervisor.start_link(__MODULE__, plugins, name: __MODULE__)
   end
 
-  def init(%Client{plugins: plugins}) do
+  def init(plugins) do
     children = Enum.map(plugins, fn (%Plugin{module: module}) ->
       worker(module, [])
     end)

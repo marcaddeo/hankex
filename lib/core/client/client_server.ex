@@ -11,15 +11,13 @@ defmodule Hank.Core.Client.Server do
     GenServer.start_link(__MODULE__, state, name: __MODULE__)
   end
 
-  def handle_cast({:connected, conn}, state) do
+  def handle_cast({:connected, conn}, %State{plugins: plugins} = state) do
     import Supervisor.Spec
-
-    state = %State{state | connection: conn}
     Connection.send(conn, "USER Hank 0 * :Hank")
     Connection.send(conn, "NICK Hank")
     Connection.send(conn, "PRIVMSG NickServ :IDENTIFY password")
-    Supervisor.start_child(@supervisor, supervisor(PluginSupervisor, [state]))
-    {:noreply, state}
+    Supervisor.start_child(@supervisor, supervisor(PluginSupervisor, [plugins]))
+    {:noreply, %State{state | connection: conn}}
   end
 
   def handle_cast({:message, %Message{} = message}, state) do
