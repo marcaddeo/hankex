@@ -15,7 +15,6 @@ defmodule Hank.Core.Client.Server do
     import Supervisor.Spec
     Connection.send(conn, "USER Hank 0 * :Hank")
     Connection.send(conn, "NICK Hank")
-    Connection.send(conn, "PRIVMSG NickServ :IDENTIFY password")
     Supervisor.start_child(@supervisor, supervisor(PluginSupervisor, [plugins]))
     {:noreply, %State{state | connection: conn}}
   end
