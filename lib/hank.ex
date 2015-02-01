@@ -8,7 +8,7 @@ defmodule Hank do
   def start(_, _) do
     import Application, only: [get_env: 2]
     config     = get_env(:hank, :connection)
-    connection = %ConnectionState{hostname: get_env(:hank, :connection)[:hostname]}
+    connection = %ConnectionState{hostname: config[:hostname]}
     config     = get_env(:hank, :client)
     client     = %ClientState{
       nickname: config[:nickname],
