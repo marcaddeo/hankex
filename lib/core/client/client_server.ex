@@ -16,6 +16,10 @@ defmodule Hank.Core.Client.Server do
   end
 
   def handle_cast({:message, %Message{} = message}, %State{connection: conn} = state) do
+    case message do
+      %Message{command: :ping, params: params} -> Connection.send(conn, "PONG :#{params}")
+      _ -> :ok
+    end
     {:noreply, state}
   end
 end
