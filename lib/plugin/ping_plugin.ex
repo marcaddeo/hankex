@@ -3,7 +3,7 @@ defmodule Hank.Plugin.PingPlugin do
   alias Hank.Core.Client.Server, as: Client
 
   def handle_cast({%Message{params: params}, client}, state) do
-    Client.send_message(client, "PONG :#{params}")
+    Client.pong(params)
     {:noreply, state}
   end
 end

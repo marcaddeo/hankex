@@ -11,7 +11,7 @@ defmodule Hank.Plugin.HiPlugin do
 
     if message =~ ~r/hi #{nick}/i do
       greeting = Enum.at(@greetings, :random.uniform(@count) - 1)
-      Client.send_message(client, "PRIVMSG #{target} :#{greeting} #{sender}")
+      Client.privmsg(target, "#{greeting} #{sender}")
     end
 
     {:noreply, state}

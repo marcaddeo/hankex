@@ -7,7 +7,7 @@ defmodule Hank.Plugin.MaizePlugin do
     %Message{target: target, params: message} = message
 
     if message =~ ~r/^[o]+[h]+$/ do
-      Client.send_message(client, "PRIVMSG #{target} :maize")
+      Client.privmsg(target, "maize")
     end
 
     {:noreply, state}
