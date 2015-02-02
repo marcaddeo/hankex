@@ -184,6 +184,7 @@ defmodule Hank.Core.Client.Server do
   end
 
   def handle_cast({:message, data}, state) do
+    IO.puts String.strip(data)
     PluginSupervisor.handle_message(Parser.parse(data), state)
     {:noreply, state}
   end
