@@ -29,8 +29,6 @@ defmodule Hank.Core.Connection.Server do
     {:noreply, state}
   end
 
-  def handle_call(:socket, _, %State{socket: socket} = state),
-  do: {:reply, socket, state}
 
   def handle_cast({:receive, data}, %State{client: client} = state) do
     IO.puts String.strip(data)
