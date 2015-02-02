@@ -22,3 +22,15 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
+config :hank, :connection,
+  hostname: "irc.yourserver.net"
+
+config :hank, :client,
+  nickname: "Hank",
+  realname: "Hank",
+  channels: ["#test"]
+
+config :hank, :youtube,
+  api_key: "your_api_key"
+
+import_config "#{Mix.env}.exs"
