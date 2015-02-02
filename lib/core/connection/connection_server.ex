@@ -15,7 +15,7 @@ defmodule Hank.Core.Connection.Server do
   ###############
   def start_link(%State{} = state) do
     Logger.info("Starting Connection Server")
-    GenServer.start_link(__MODULE__, state)
+    GenServer.start_link(__MODULE__, state, name: __MODULE__)
   end
 
   def init(%State{hostname: hostname, port: port} = state) do
