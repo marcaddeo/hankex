@@ -4,7 +4,7 @@ defmodule Hank.Plugin.Youtube.YoutubePlugin do
   alias Hank.Plugin.Youtube
   alias Hank.Core.Client.Server, as: Client
 
-  @regex ~r/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?(?<video_id>[^#\&\?]*).*/
+  @regex ~r/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?(?<video_id>[^#\&\?\s]*).*/
 
   def handle_cast({%Message{} = message, _}, state) do
     %Message{target: target, params: message} = message
