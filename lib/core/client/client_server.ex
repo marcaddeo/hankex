@@ -1,5 +1,6 @@
 defmodule Hank.Core.Client.Server do
   use GenServer
+  require Logger
   alias Hank.Core.Parser
   alias Hank.Core.Client.State
   alias Hank.Core.Plugin.Supervisor, as: PluginSupervisor
@@ -161,6 +162,7 @@ defmodule Hank.Core.Client.Server do
   # GenServer API
   ###############
   def start_link(%State{} = state) do
+    Logger.info("Starting Client Server")
     GenServer.start_link(__MODULE__, state, name: __MODULE__)
   end
 
