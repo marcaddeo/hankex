@@ -4,7 +4,6 @@ defmodule Hank.Core.Client.State do
   """
 
   defstruct [
-    connection:  nil,
     channels:    [],
     nickname:    nil,
     password:    nil,
