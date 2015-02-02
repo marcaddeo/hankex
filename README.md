@@ -10,9 +10,9 @@ Todo
 - [ ] List stuff
 - [ ] Write tests
 - [ ] Add comments
-- [ ] Implement standard irc messages for hook responses
+- [x] Implement standard irc messages for hook responses
 - [ ] Add alternate nick hook
 - [ ] Implement Command system
-- [ ] Weather module
-- [ ] The fucking weather module
-- [x] Youtube module
+- [ ] Weather plugin
+- [ ] The fucking weather plugin
+- [x] Youtube plugin
