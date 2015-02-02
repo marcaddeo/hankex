@@ -166,7 +166,7 @@ defmodule Hank.Core.Client.Server do
     GenServer.start_link(__MODULE__, state, name: __MODULE__)
   end
 
-  def handle_cast({:connected, conn}, %State{nickname: nick, realname: name, plugins: plugins} = state) do
+  def handle_cast(:connected, %State{nickname: nick, realname: name, plugins: plugins} = state) do
     import Supervisor.Spec
 
     # Register with the IRC server
@@ -177,7 +177,7 @@ defmodule Hank.Core.Client.Server do
     child = supervisor(PluginSupervisor, [plugins])
     Supervisor.start_child(Hank.Core.Client.Supervisor, child)
 
-    {:noreply, %State{state | connection: conn}}
+    {:noreply, state}
   end
 
   def handle_cast({:message, data}, state) do
@@ -185,108 +185,108 @@ defmodule Hank.Core.Client.Server do
     {:noreply, state}
   end
 
-  def handle_cast({:user, nickname, realname}, %State{connection: conn} = client) do
-    Connection.send(conn, "USER #{nickname} 0 * :#{realname}")
+  def handle_cast({:user, nickname, realname}, %State{} = client) do
+    Connection.send("USER #{nickname} 0 * :#{realname}")
     {:noreply, client}
   end
 
-  def handle_cast({:join, channel}, %State{connection: conn, channels: channels} = client) do
-    Connection.send(conn, "JOIN #{channel}")
+  def handle_cast({:join, channel}, %State{channels: channels} = client) do
+    Connection.send("JOIN #{channel}")
     {:noreply, %State{client | channels: [channel | channels]}}
   end
 
-  def handle_cast({:join, channel, key}, %State{connection: conn, channels: channels} = client) do
-    Connection.send(conn, "JOIN #{channel} #{key}")
+  def handle_cast({:join, channel, key}, %State{channels: channels} = client) do
+    Connection.send("JOIN #{channel} #{key}")
     {:noreply, %State{client | channels: [channel | channels]}}
   end
 
-  def handle_cast({:part, channel}, %State{connection: conn, channels: channels} = client) do
-    Connection.send(conn, "PART #{channel}")
+  def handle_cast({:part, channel}, %State{channels: channels} = client) do
+    Connection.send("PART #{channel}")
     {:noreply, %State{client | channels: channels -- channel}}
   end
 
-  def handle_cast({:part, channel, message}, %State{connection: conn, channels: channels} = client) do
-    Connection.send(conn, "PART #{channel} :#{message}")
+  def handle_cast({:part, channel, message}, %State{channels: channels} = client) do
+    Connection.send("PART #{channel} :#{message}")
     {:noreply, %State{client | channels: channels -- channel}}
   end
 
-  def handle_cast({:nick, nickname}, %State{connection: conn} = client) do
-    Connection.send(conn, "NICK #{nickname}")
+  def handle_cast({:nick, nickname}, %State{} = client) do
+    Connection.send("NICK #{nickname}")
     {:noreply, %State{client | nickname: nickname}}
   end
 
-  def handle_cast({:privmsg, target, message}, %State{connection: conn} = client) do
-    Connection.send(conn, "PRIVMSG #{target} :#{message}")
+  def handle_cast({:privmsg, target, message}, %State{} = client) do
+    Connection.send("PRIVMSG #{target} :#{message}")
     {:noreply, client}
   end
 
-  def handle_cast({:identify, password}, %State{connection: conn} = client) do
-    Connection.send(conn, "PRIVMSG NickServ :IDENTIFY #{password}")
+  def handle_cast({:identify, password}, %State{} = client) do
+    Connection.send("PRIVMSG NickServ :IDENTIFY #{password}")
     {:noreply, client}
   end
 
-  def handle_cast({:ctcp, target, message}, %State{connection: conn} = client) do
-    Connection.send(conn, "PRIVMSG #{target} :#{<<1, message, 1>>}")
+  def handle_cast({:ctcp, target, message}, %State{} = client) do
+    Connection.send("PRIVMSG #{target} :#{<<1, message, 1>>}")
     {:noreply, client}
   end
 
-  def handle_cast({:action, target, message}, %State{connection: conn} = client) do
-    Connection.send(conn, "PRIVMSG #{target} :#{<<1, "ACTION ", message, 1>>}")
+  def handle_cast({:action, target, message}, %State{} = client) do
+    Connection.send("PRIVMSG #{target} :#{<<1, "ACTION ", message, 1>>}")
     {:noreply, client}
   end
 
-  def handle_cast({:notice, target, message}, %State{connection: conn} = client) do
-    Connection.send(conn, "NOTICE #{target} :#{message}")
+  def handle_cast({:notice, target, message}, %State{} = client) do
+    Connection.send("NOTICE #{target} :#{message}")
     {:noreply, client}
   end
 
-  def handle_cast(:quit, %State{connection: conn} = client) do
-    Connection.send(conn, "QUIT :Leaving")
+  def handle_cast(:quit, %State{} = client) do
+    Connection.send("QUIT :Leaving")
     {:noreply, client}
   end
 
-  def handle_cast({:quit, message}, %State{connection: conn} = client) do
-    Connection.send(conn, "QUIT :#{message}")
+  def handle_cast({:quit, message}, %State{} = client) do
+    Connection.send("QUIT :#{message}")
     {:noreply, client}
   end
 
-  def handle_cast({:kick, channel, target}, %State{connection: conn} = client) do
-    Connection.send(conn, "KICK #{channel} #{target}")
+  def handle_cast({:kick, channel, target}, %State{} = client) do
+    Connection.send("KICK #{channel} #{target}")
     {:noreply, client}
   end
 
-  def handle_cast({:kick, channel, target, message}, %State{connection: conn} = client) do
-    Connection.send(conn, "KICK #{channel} #{target} :#{message}")
+  def handle_cast({:kick, channel, target, message}, %State{} = client) do
+    Connection.send("KICK #{channel} #{target} :#{message}")
     {:noreply, client}
   end
 
-  def handle_cast({:mode, target, flags}, %State{connection: conn} = client) do
-    Connection.send(conn, "MODE #{target} #{flags}")
+  def handle_cast({:mode, target, flags}, %State{} = client) do
+    Connection.send("MODE #{target} #{flags}")
     {:noreply, client}
   end
 
-  def handle_cast({:mode, target, flags, args}, %State{connection: conn} = client) do
-    Connection.send(conn, "MODE #{target} #{flags} #{args}")
+  def handle_cast({:mode, target, flags, args}, %State{} = client) do
+    Connection.send("MODE #{target} #{flags} #{args}")
     {:noreply, client}
   end
 
-  def handle_cast({:invite, target, channel}, %State{connection: conn} = client) do
-    Connection.send(conn, "INVITE #{target} #{channel}")
+  def handle_cast({:invite, target, channel}, %State{} = client) do
+    Connection.send("INVITE #{target} #{channel}")
     {:noreply, client}
   end
 
-  def handle_cast({:pong, args}, %State{connection: conn} = client) do
-    Connection.send(conn, "PONG #{args}")
+  def handle_cast({:pong, args}, %State{} = client) do
+    Connection.send("PONG #{args}")
     {:noreply, client}
   end
 
-  def handle_cast({:whois, target}, %State{connection: conn} = client) do
-    Connection.send(conn, "WHOIS #{target}")
+  def handle_cast({:whois, target}, %State{} = client) do
+    Connection.send("WHOIS #{target}")
     {:noreply, client}
   end
 
-  def handle_cast({:raw, message}, %State{connection: conn} = client) do
-    Connection.send(conn, message)
+  def handle_cast({:raw, message}, %State{} = client) do
+    Connection.send(message)
     {:noreply, client}
   end
 end
