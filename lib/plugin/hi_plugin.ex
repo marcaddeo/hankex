@@ -6,7 +6,7 @@ defmodule Hank.Plugin.HiPlugin do
   @greetings ["hi", "bonjour", "sup", "ni hao", "fuck off"]
   @count Enum.count(@greetings)
 
-  def handle_cast({%Message{} = message, %State{nickname: nick} = client}, state) do
+  def handle_cast({%Message{} = message, %State{nickname: nick}}, state) do
     %Message{target: target, sender: sender, params: message} = message
 
     if message =~ ~r/hi #{nick}/i do

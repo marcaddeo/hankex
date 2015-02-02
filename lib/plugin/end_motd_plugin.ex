@@ -3,7 +3,7 @@ defmodule Hank.Plugin.EndMotdPlugin do
   alias Hank.Core.Client.State
   alias Hank.Core.Client.Server, as: Client
 
-  def handle_cast({_, %State{channels: channels, password: password} = client}, state) do
+  def handle_cast({_, %State{channels: channels, password: password}}, state) do
     if password do
       Client.identify(password)
     end

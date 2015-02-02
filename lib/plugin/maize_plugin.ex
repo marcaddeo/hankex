@@ -1,9 +1,8 @@
 defmodule Hank.Plugin.MaizePlugin do
   use Hank.Core.Plugin
-  alias Hank.Core.Client.State
   alias Hank.Core.Client.Server, as: Client
 
-  def handle_cast({%Message{target: "#" <> _} = message, %State{} = client}, state) do
+  def handle_cast({%Message{target: "#" <> _} = message, _}, state) do
     %Message{target: target, params: message} = message
 
     if message =~ ~r/^[o]+[h]+$/ do
