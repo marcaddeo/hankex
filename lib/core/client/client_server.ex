@@ -158,6 +158,9 @@ defmodule Hank.Core.Client.Server do
     GenServer.cast(__MODULE__, {:raw, message})
   end
 
+  def connect(), do: GenServer.cast(__MODULE__, :connected)
+  def receive(data), do: GenServer.cast(__MODULE__, {:message, data})
+
   ###############
   # GenServer API
   ###############
