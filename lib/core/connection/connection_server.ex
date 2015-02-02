@@ -36,7 +36,7 @@ defmodule Hank.Core.Connection.Server do
   end
 
   def handle_cast({:send, message}, %State{socket: socket} = state) do
-    IO.puts "Sending #{message}"
+    IO.puts(IO.ANSI.yellow() <> "Sending #{message}" <> IO.ANSI.reset())
     Socket.Stream.send!(socket, "#{message}\r\n")
     {:noreply, state}
   end
