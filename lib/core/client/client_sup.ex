@@ -8,18 +8,15 @@ defmodule Hank.Core.Client.Supervisor do
 
   def start_link({%ClientState{}, %ConnectionState{}} = state) do
     Logger.info("Starting Client Supervisor")
-    return = {:ok, sup} = Supervisor.start_link(__MODULE__, state, name: __MODULE__)
-    start_children(sup, state)
-    return
+    Supervisor.start_link(__MODULE__, state, name: __MODULE__)
   end
 
-  def init(_) do
-    supervise([], strategy: :one_for_one)
-  end
+  def init({%ClientState{} = client, %ConnectionState{} = conn}) do
+    children = [
+      worker(Server, [client]),
+      supervisor(ConnectionSupervisor, [conn]),
+    ]
 
-  defp start_children(sup, {client, conn}) do
-    {:ok, server} = Supervisor.start_child(sup, worker(Server, [client]))
-    conn = %ConnectionState{conn | client: server}
-    Supervisor.start_child(sup, supervisor(ConnectionSupervisor, [conn]))
+    supervise(children, strategy: :one_for_one)
   end
 end
