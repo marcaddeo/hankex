@@ -3,6 +3,7 @@ defmodule Hank.Core.Connection.Server do
   require Logger
   alias Hank.Core.Connection.State
   alias Hank.Core.Connection.SocketAgent
+  alias Hank.Core.Client.Server, as: Client
 
   ############
   # Public API
@@ -24,15 +25,13 @@ defmodule Hank.Core.Connection.Server do
     {:ok, %State{state | socket: socket}, 0}
   end
 
-  def handle_info(:timeout, %State{client: client} = state) do
-    GenServer.cast(client, {:connected, self})
+  def handle_info(:timeout, %State{} = state) do
+    Client.connect()
     {:noreply, state}
   end
 
-
-  def handle_cast({:receive, data}, %State{client: client} = state) do
-    IO.puts String.strip(data)
-    GenServer.cast(client, {:message, data})
+  def handle_cast({:receive, data}, %State{} = state) do
+    Client.receive(data)
     {:noreply, state}
   end
 
