@@ -1,4 +1,5 @@
 defmodule Hank.Core.Parser do
+  use Hank.Util.Color
   alias Hank.Core.Message
 
   def parse(":" <> data) do
@@ -45,6 +46,21 @@ defmodule Hank.Core.Parser do
           params = params
             |> to_string
             |> String.strip
+
+          # Strip control characters from message
+          params = Regex.replace(~r/#{@bold}/, params, "")
+          params = Regex.replace(~r/#{@reset}/, params, "")
+          params = Regex.replace(~r/#{@color}\d{1,2},\d{1,2}/, params, "")
+          params = Regex.replace(~r/#{@color}\d{1,2}/, params, "")
+          params = params
+            |> String.to_char_list()
+            |> Enum.filter(fn (char) ->
+              case char do
+                char when char < 32 -> false
+                _ -> true
+              end
+            end)
+            |> List.to_string()
 
           target = target
             |> to_string
