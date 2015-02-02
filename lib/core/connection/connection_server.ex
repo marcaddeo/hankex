@@ -3,6 +3,15 @@ defmodule Hank.Core.Connection.Server do
   require Logger
   alias Hank.Core.Connection.State
 
+  ############
+  # Public API
+  ############
+  def send(message), do: GenServer.cast(__MODULE__, {:send, message})
+  def receive(data), do: GenServer.cast(__MODULE__, {:receive, data})
+
+  ###############
+  # GenServer API
+  ###############
   def start_link(%State{} = state) do
     Logger.info("Starting Connection Server")
     GenServer.start_link(__MODULE__, state)
