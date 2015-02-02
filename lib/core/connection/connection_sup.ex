@@ -4,6 +4,7 @@ defmodule Hank.Core.Connection.Supervisor do
   alias Hank.Core.Connection.State
   alias Hank.Core.Connection.Server
   alias Hank.Core.Connection.Listener
+  alias Hank.Core.Connection.SocketAgent
 
   def start_link(%State{} = state) do
     Logger.info("Starting Connection Supervisor")
@@ -12,6 +13,7 @@ defmodule Hank.Core.Connection.Supervisor do
 
   def init(state) do
     children = [
+      worker(SocketAgent, []),
       worker(Server, [state]),
       worker(Listener, []),
     ]
