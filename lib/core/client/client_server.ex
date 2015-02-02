@@ -1,6 +1,6 @@
 defmodule Hank.Core.Client.Server do
   use GenServer
-  alias Hank.Core.Message
+  alias Hank.Core.Parser
   alias Hank.Core.Client.State
   alias Hank.Core.Plugin.Supervisor, as: PluginSupervisor
   alias Hank.Core.Connection.Server, as: Connection
@@ -178,8 +178,8 @@ defmodule Hank.Core.Client.Server do
     {:noreply, %State{state | connection: conn}}
   end
 
-  def handle_cast({:message, %Message{} = message}, state) do
-    PluginSupervisor.handle_message(message, state)
+  def handle_cast({:message, data}, state) do
+    PluginSupervisor.handle_message(Parser.parse(data), state)
     {:noreply, state}
   end
 
