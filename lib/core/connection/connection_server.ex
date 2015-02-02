@@ -2,6 +2,7 @@ defmodule Hank.Core.Connection.Server do
   use GenServer
   require Logger
   alias Hank.Core.Connection.State
+  alias Hank.Core.Connection.SocketAgent
 
   ############
   # Public API
@@ -19,6 +20,7 @@ defmodule Hank.Core.Connection.Server do
 
   def init(%State{hostname: hostname, port: port} = state) do
     {:ok, socket} = Socket.TCP.connect(hostname, port, packet: :line)
+    SocketAgent.set_socket(socket)
     {:ok, %State{state | socket: socket}, 0}
   end
 
@@ -42,5 +44,8 @@ defmodule Hank.Core.Connection.Server do
     {:noreply, state}
   end
 
-  def send(pid, message), do: GenServer.cast(pid, {:send, message})
+  def termindate(_, _) do
+    SocketAgent.clear_socket()
+    :ok
+  end
 end
