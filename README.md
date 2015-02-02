@@ -15,4 +15,4 @@ Todo
 - [ ] Implement Command system
 - [ ] Weather module
 - [ ] The fucking weather module
-- [ ] Youtube module
+- [x] Youtube module

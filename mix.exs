@@ -14,7 +14,16 @@ defmodule Hank.Mixfile do
   def application do
     [
       mod: {Hank, []},
-      applications: [:logger, :stdlib, :kernel, :elixir, :mix, :socket]
+      applications: [
+        :logger,
+        :stdlib,
+        :kernel,
+        :elixir,
+        :mix,
+        :socket,
+        :httpoison,
+        :poison,
+      ]
     ]
   end
 
@@ -31,6 +40,8 @@ defmodule Hank.Mixfile do
     [
       {:socket, "~> 0.2.8"},
       {:exrm, "~> 0.14.17"},
+      {:httpoison, "~> 0.6"},
+      {:poison, "~> 1.3.1"},
     ]
   end
 end

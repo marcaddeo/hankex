@@ -21,6 +21,7 @@ defmodule Hank do
         %Plugin{name: :version_plugin, module: Hank.Plugin.VersionPlugin, hooks: [:privmsg]},
         %Plugin{name: :hi_plugin, module: Hank.Plugin.HiPlugin, hooks: [:privmsg]},
         %Plugin{name: :maize_plugin, module: Hank.Plugin.MaizePlugin, hooks: [:privmsg]},
+        %Plugin{name: :youtube_plugin, module: Hank.Plugin.Youtube.YoutubePlugin, hooks: [:privmsg]},
       ]
     }
 
