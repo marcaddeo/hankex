@@ -6,5 +6,6 @@ defmodule Hank.Core.Message do
     sender: nil,
     hostmask: nil,
     params: nil,
+    raw_params: nil,
   ]
 end

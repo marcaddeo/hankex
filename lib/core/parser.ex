@@ -43,12 +43,12 @@ defmodule Hank.Core.Parser do
 
           [target | params] = String.split(head, ":", parts: 2)
 
-          params = params
+          raw_params = params
             |> to_string
             |> String.strip
 
           # Strip control characters from message
-          params = Regex.replace(~r/#{@bold}/, params, "")
+          params = Regex.replace(~r/#{@bold}/, raw_params, "")
           params = Regex.replace(~r/#{@reset}/, params, "")
           params = Regex.replace(~r/#{@color}\d{1,2},\d{1,2}/, params, "")
           params = Regex.replace(~r/#{@color}\d{1,2}/, params, "")
@@ -66,7 +66,11 @@ defmodule Hank.Core.Parser do
             |> to_string
             |> String.strip
 
-          parse_data(tail, %Message{message | target: target, params: params})
+          parse_data(tail, %Message{message |
+            target:      target,
+            raw_params:  raw_params,
+            params:      params,
+          })
         else
           head = head
             |> to_string
