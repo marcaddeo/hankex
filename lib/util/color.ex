@@ -1,7 +1,7 @@
 defmodule Hank.Util.Color do
   defmacro __using__(_) do
     quote do
-      import Hank.Core.Color
+      import Hank.Util.Color
 
       @bold    <<2>>
       @reset   <<15>>
