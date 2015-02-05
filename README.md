@@ -7,6 +7,7 @@ Hank
 
 Todo
 ====
+- [ ] Handle channel state
 - [ ] List stuff
 - [ ] Write tests
 - [ ] Add comments
