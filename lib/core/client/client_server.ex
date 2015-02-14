@@ -309,7 +309,7 @@ defmodule Hank.Core.Client.Server do
       %Message{command: :join, params: channel, sender: nickname} ->
         Channel.joined(channel, nickname)
 
-      %Message{command: :part, sender: ^nick, target: channel} ->
+      %Message{command: :part, sender: ^nick, params: channel} ->
         Channel.remove(channel)
       %Message{command: :part, target: channel, sender: nickname} ->
         Channel.parted(channel, nickname)
