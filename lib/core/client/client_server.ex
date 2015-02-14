@@ -199,24 +199,24 @@ defmodule Hank.Core.Client.Server do
     {:noreply, client}
   end
 
-  def handle_cast({:join, channel}, %State{channels: channels} = client) do
+  def handle_cast({:join, channel}, client) do
     Connection.send("JOIN #{channel}")
-    {:noreply, %State{client | channels: [channel | channels]}}
+    {:noreply, client}
   end
 
-  def handle_cast({:join, channel, key}, %State{channels: channels} = client) do
+  def handle_cast({:join, channel, key}, client) do
     Connection.send("JOIN #{channel} #{key}")
-    {:noreply, %State{client | channels: [channel | channels]}}
+    {:noreply, client}
   end
 
-  def handle_cast({:part, channel}, %State{channels: channels} = client) do
+  def handle_cast({:part, channel}, client) do
     Connection.send("PART #{channel}")
-    {:noreply, %State{client | channels: channels -- channel}}
+    {:noreply, client}
   end
 
-  def handle_cast({:part, channel, message}, %State{channels: channels} = client) do
+  def handle_cast({:part, channel, message}, client) do
     Connection.send("PART #{channel} :#{message}")
-    {:noreply, %State{client | channels: channels -- channel}}
+    {:noreply, client}
   end
 
   def handle_cast({:nick, nickname}, %State{} = client) do
