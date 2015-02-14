@@ -2,6 +2,8 @@ defmodule Hank.Core.Client.Server do
   use GenServer
   require Logger
   alias Hank.Core.Parser
+  alias Hank.Core.Channel
+  alias Hank.Core.Message
   alias Hank.Core.Client.State
   alias Hank.Core.Plugin.Supervisor, as: PluginSupervisor
   alias Hank.Core.Connection.Server, as: Connection
@@ -185,7 +187,10 @@ defmodule Hank.Core.Client.Server do
 
   def handle_cast({:message, data}, state) do
     IO.puts String.strip(data)
-    PluginSupervisor.handle_message(Parser.parse(data), state)
+
+    message = Parser.parse(data)
+    handle_message(message, state)
+    PluginSupervisor.handle_message(message, state)
     {:noreply, state}
   end
 
@@ -292,5 +297,32 @@ defmodule Hank.Core.Client.Server do
   def handle_cast({:raw, message}, %State{} = client) do
     Connection.send(message)
     {:noreply, client}
+  end
+
+  #############
+  # Private Api
+  #############
+  defp handle_message(message, %State{nickname: nick}) do
+    case message do
+      %Message{command: :join, sender: ^nick, params: channel} ->
+        Channel.add(channel)
+      %Message{command: :join, params: channel, sender: nickname} ->
+        Channel.joined(channel, nickname)
+
+      %Message{command: :part, sender: ^nick, target: channel} ->
+        Channel.remove(channel)
+      %Message{command: :part, target: channel, sender: nickname} ->
+        Channel.parted(channel, nickname)
+
+      %Message{command: :"332", params: topic, target: target} ->
+        [_ | [channel]] = String.split(target, " ")
+        Channel.topic(channel, topic)
+
+      %Message{command: :"353", params: names, target: target} ->
+        [_ | [channel]] = String.split(target, ~r/ [^\s] /)
+        Channel.names(channel, names)
+
+      _ -> :ok
+    end
   end
 end

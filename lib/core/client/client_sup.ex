@@ -1,6 +1,7 @@
 defmodule Hank.Core.Client.Supervisor do
   use Supervisor
   require Logger
+  alias Hank.Core.Channel
   alias Hank.Core.Client.Server
   alias Hank.Core.Client.State, as: ClientState
   alias Hank.Core.Connection.State, as: ConnectionState
@@ -15,6 +16,7 @@ defmodule Hank.Core.Client.Supervisor do
     children = [
       worker(Server, [client]),
       supervisor(ConnectionSupervisor, [conn]),
+      worker(Channel, []),
     ]
 
     supervise(children, strategy: :one_for_one)
