@@ -132,18 +132,20 @@ defmodule Hank.Core.Channel do
 
     parse_modes(mode_tail, target_tail, users)
   end
-  defp parse_modes(modes, targets, users \\ []) do
-    modes = Regex.scan(~r/[+-][q,a,o,h,v]+/, modes) |> List.flatten()
+  defp parse_modes(modes, targets, users) do
+    targets = String.split(targets, " ")
+
+    Regex.scan(~r/[+-][q,a,o,h,v]+/, modes)
+    |> List.flatten()
     |> Enum.map(fn (mode) ->
-      operation = String.slice(mode, 0, 1)
-      modes = String.slice(mode, 1..-1)
-      modes = String.split(modes, "", parts: String.length(modes))
+      operation = String.first(mode)
+      modes     = String.slice(mode, 1..-1)
+      modes     = String.split(modes, "", parts: String.length(modes))
+
       for mode <- modes do operation <> mode end
     end)
     |> List.flatten()
-
-    targets = String.split(targets, " ")
-    parse_modes(modes, targets, users)
+    |> parse_modes(targets, users)
   end
 
   defp parse_names([], users), do: users
