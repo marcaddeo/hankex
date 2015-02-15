@@ -45,6 +45,10 @@ defmodule Hank.Core.Channel do
     GenServer.cast(__MODULE__, {:topic, channel, topic})
   end
 
+  def mode(channel, modes, targets) do
+    GenServer.cast(__MODULE__, {:mode, channel, modes, targets})
+  end
+
   ###############
   # GenServer Api
   ###############
@@ -94,6 +98,52 @@ defmodule Hank.Core.Channel do
       %Channel{chan | topic: topic}
     end)
     {:noreply, channels}
+  end
+
+  def handle_cast({:mode, channel, modes, targets}, channels) do
+    channels = Dict.update!(channels, channel, fn (chan) ->
+      %Channel{chan | users: parse_modes(modes, targets, chan.users)}
+    end)
+    {:noreply, channels}
+  end
+
+  defp parse_modes([], [], users), do: users
+  defp parse_modes([mode | mode_tail], [target | target_tail], users) do
+    users = Dict.update!(users, target, fn (user) ->
+      permissions = case mode do
+        "+q" -> [:owner | user.permission]
+        "-q" -> user.permissions -- [:owner]
+
+        "+a" -> [:admin | user.permissions]
+        "-a" -> user.permissions -- [:admin]
+
+        "+o" -> [:op | user.permissions]
+        "-o" -> user.permissions -- [:op]
+
+        "+h" -> [:halfop | user.permissions]
+        "-h" -> user.permissions -- [:halfop]
+
+        "+v" -> [:voice | user.permissions]
+        "-v" -> user.permissions -- [:voice]
+      end
+
+      %User{user | permissions: permissions}
+    end)
+
+    parse_modes(mode_tail, target_tail, users)
+  end
+  defp parse_modes(modes, targets, users \\ []) do
+    modes = Regex.scan(~r/[+-][q,a,o,h,v]+/, modes) |> List.flatten()
+    |> Enum.map(fn (mode) ->
+      operation = String.slice(mode, 0, 1)
+      modes = String.slice(mode, 1..-1)
+      modes = String.split(modes, "", parts: String.length(modes))
+      for mode <- modes do operation <> mode end
+    end)
+    |> List.flatten()
+
+    targets = String.split(targets, " ")
+    parse_modes(modes, targets, users)
   end
 
   defp parse_names([], users), do: users

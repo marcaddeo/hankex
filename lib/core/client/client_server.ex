@@ -322,6 +322,10 @@ defmodule Hank.Core.Client.Server do
         [_ | [channel]] = String.split(target, ~r/ [^\s] /)
         Channel.names(channel, names)
 
+      %Message{command: :mode, params: <<"#", _ :: binary>> = params} ->
+        [channel, modes, targets] = String.split(params, " ", parts: 3)
+        Channel.mode(channel, modes, targets)
+
       _ -> :ok
     end
   end
