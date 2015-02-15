@@ -152,8 +152,8 @@ defmodule Hank.Core.Channel do
   defp parse_names([head | tail], users) do
     parse_names(tail, Dict.put(users, head.nickname, head))
   end
-  defp parse_names(names, users \\ %{}) do
-    names = names
+  defp parse_names(names, users) do
+    names
     |> String.split(" ")
     |> Enum.map(fn (nick) ->
       [nick, permission] = case nick do
