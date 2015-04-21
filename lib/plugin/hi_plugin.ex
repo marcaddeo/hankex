@@ -3,7 +3,15 @@ defmodule Hank.Plugin.HiPlugin do
   alias Hank.Core.Client.State
   alias Hank.Core.Client.Server, as: Client
 
-  @greetings ["hi", "bonjour", "sup", "ni hao", "fuck off"]
+  @greetings [
+    "hi",
+    "h",
+    "bonjour",
+    "sup",
+    "ni hao",
+    "fuck off",
+    "piss off",
+  ]
   @count Enum.count(@greetings)
 
   def handle_cast({%Message{} = message, %State{nickname: nick}}, state) do
